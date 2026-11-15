@@ -13,6 +13,7 @@ function CreateEvent({ onEventCreated }) {
   const [windowStart, setWindowStart] = useState('');
   const [windowEnd, setWindowEnd] = useState('');
   const [requiredCapacity, setRequiredCapacity] = useState(5);
+  const [priority, setPriority] = useState(2); // 1 = low, 2 = normal, 3 = high
   const [selectedParticipants, setSelectedParticipants] = useState({});
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -104,6 +105,7 @@ function CreateEvent({ onEventCreated }) {
           requested_window_start: windowStart,
           requested_window_end: windowEnd,
           required_capacity: Number(requiredCapacity),
+          priority: Number(priority),
           participants,
         }),
       });
@@ -113,6 +115,7 @@ function CreateEvent({ onEventCreated }) {
       setWindowStart('');
       setWindowEnd('');
       setSelectedParticipants({});
+      setPriority(2);
 
       if (onEventCreated) onEventCreated(result.event);
     } catch (err) {
@@ -181,6 +184,20 @@ function CreateEvent({ onEventCreated }) {
               min="1"
               required
             />
+          </div>
+
+          <div className="ce-field">
+            <label>{t('createEvent.priority')}</label>
+            <select
+              className="ce-select"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+            >
+              <option value={1}>{t('createEvent.priorityLow')}</option>
+              <option value={2}>{t('createEvent.priorityNormal')}</option>
+              <option value={3}>{t('createEvent.priorityHigh')}</option>
+            </select>
+            <small className="ce-hint">{t('createEvent.priorityHint')}</small>
           </div>
 
           <div className="ce-field">

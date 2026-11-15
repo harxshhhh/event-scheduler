@@ -9,6 +9,8 @@ function Dashboard({ refreshKey, onChanged }) {
   const [loading, setLoading] = useState(true);
   const [actionMessage, setActionMessage] = useState({});
   const [justScheduled, setJustScheduled] = useState(null);
+  const [bulkMessage, setBulkMessage] = useState('');
+  const [bulkRunning, setBulkRunning] = useState(false);
   const { t, lang } = useLanguage();
 
   async function loadEvents() {
@@ -72,6 +74,34 @@ function Dashboard({ refreshKey, onChanged }) {
     }
   }
 
+  // Schedules every pending event, highest priority first.
+  async function handleScheduleAll() {
+    setBulkRunning(true);
+    setBulkMessage(t('dashboard.schedulingAll'));
+    try {
+      const result = await apiRequest('/schedule-pending', { method: 'POST' });
+      setBulkMessage(
+        t('dashboard.bulkSummary')
+          .replace('{done}', result.scheduledCount)
+          .replace('{total}', result.total)
+      );
+      await loadEvents();
+      if (onChanged) onChanged();
+    } catch (err) {
+      setBulkMessage(err.message);
+    } finally {
+      setBulkRunning(false);
+    }
+  }
+
+  function priorityLabel(p) {
+    if (p === 1) return t('dashboard.priorityLow');
+    if (p === 3) return t('dashboard.priorityHigh');
+    return t('dashboard.priorityNormal');
+  }
+
+  const pendingCount = events.filter((event) => event.status === 'pending').length;
+
   return (
     <div>
       <h1 className="dash-header">{t('dashboard.title')}</h1>
@@ -82,11 +112,25 @@ function Dashboard({ refreshKey, onChanged }) {
         <p className="dash-empty">{t('dashboard.empty')}</p>
       )}
 
+      {!loading && pendingCount > 1 && (
+        <div className="dash-bulk">
+          <button
+            className="dash-btn primary"
+            onClick={handleScheduleAll}
+            disabled={bulkRunning}
+          >
+            {t('dashboard.scheduleAll')} ({pendingCount})
+          </button>
+          {bulkMessage && <span className="dash-bulk-message">{bulkMessage}</span>}
+        </div>
+      )}
+
       {!loading && events.length > 0 && (
         <table className="dash-table">
           <thead>
             <tr>
               <th>{t('dashboard.colTitle')}</th>
+              <th>{t('dashboard.colPriority')}</th>
               <th>{t('dashboard.colStatus')}</th>
               <th>{t('dashboard.colTime')}</th>
               <th>{t('dashboard.colCapacity')}</th>
@@ -97,6 +141,11 @@ function Dashboard({ refreshKey, onChanged }) {
             {events.map((event) => (
               <tr key={event.id} className={justScheduled === event.id ? 'dash-row-pulse' : ''}>
                 <td>{event.title}</td>
+                <td>
+                  <span className={`dash-priority p${event.priority || 2}`}>
+                    {priorityLabel(event.priority || 2)}
+                  </span>
+                </td>
                 <td>
                   <span className={`dash-badge ${event.status}`}>{event.status}</span>
                 </td>

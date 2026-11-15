@@ -147,3 +147,20 @@
     gap: 0;
   }
 }
+/* ---- Priority field ---- */
+.ce-select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid rgba(128, 128, 128, 0.4);
+}
+
+.ce-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
