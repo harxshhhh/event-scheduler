@@ -1,0 +1,149 @@
+.ce-header {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 6px 0;
+}
+
+.ce-subnote {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 32px 0;
+}
+
+.ce-card {
+  max-width: 640px;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 32px;
+}
+
+.ce-field {
+  margin-bottom: 18px;
+}
+
+.ce-field label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.ce-field input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.ce-field input:focus {
+  border-color: var(--accent);
+}
+
+.ce-row {
+  display: flex;
+  gap: 16px;
+}
+
+.ce-row .ce-field {
+  flex: 1;
+}
+
+.ce-participants-box {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.ce-participant-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border-radius: 6px;
+}
+
+.ce-participant-row:hover {
+  background: var(--surface-hover);
+}
+
+.ce-participant-row input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.ce-participant-name {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.ce-participant-role {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 10px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+}
+
+.ce-empty {
+  color: var(--text-secondary);
+  font-size: 14px;
+  padding: 12px;
+}
+
+.ce-error {
+  color: var(--danger);
+  font-size: 13px;
+  margin: 16px 0 0 0;
+}
+
+.ce-success {
+  color: var(--success);
+  font-size: 13px;
+  margin: 16px 0 0 0;
+}
+
+.ce-submit {
+  margin-top: 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 11px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.ce-submit:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.ce-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+@media (max-width: 700px) {
+  .ce-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
