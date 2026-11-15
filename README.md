@@ -14,7 +14,7 @@ Built for a BSc Artificial Intelligence final project at Anglia Ruskin Universit
 - Dashboard of your events with status (pending or scheduled), priority and scheduled time
 - Clear reasons when no feasible schedule exists
 - Light, dark and auto themes
-- English, Spanish and French
+- Four languages: English, Spanish, French and German
 
 ## How the scheduler works
 1. Generate hourly candidate time slots inside the requested window.
@@ -104,7 +104,7 @@ backend/
 frontend/
   src/
     pages/        Dashboard, Create Event, Availability, Settings, Login
-    i18n/         English, Spanish and French text
+    i18n/         English, Spanish, French and German text
     api/          API client
 database/init/    SQL schema and seed data
 docker-compose.yml
