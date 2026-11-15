@@ -20,6 +20,7 @@ router.post('/events', requireAuth, async (req, res) => {
     requested_window_start,
     requested_window_end,
     required_capacity,
+    priority,
     participants,
   } = req.body;
 
@@ -37,6 +38,12 @@ router.post('/events', requireAuth, async (req, res) => {
     return res.status(400).json({ message: 'required_capacity must be positive' });
   }
 
+  // Priority: 1 = low, 2 = normal (default), 3 = high
+  const eventPriority = priority === undefined || priority === null || priority === '' ? 2 : Number(priority);
+  if (![1, 2, 3].includes(eventPriority)) {
+    return res.status(400).json({ message: 'priority must be 1 (low), 2 (normal) or 3 (high)' });
+  }
+
   const startDate = new Date(requested_window_start);
   const endDate = new Date(requested_window_end);
 
@@ -50,7 +57,7 @@ router.post('/events', requireAuth, async (req, res) => {
     });
   }
 
-    const windowMinutes = (endDate - startDate) / 60000;
+  const windowMinutes = (endDate - startDate) / 60000;
   if (duration_minutes > windowMinutes) {
     return res.status(400).json({
       message: `duration_minutes (${duration_minutes}) cannot be longer than the requested window (${windowMinutes} minutes)`,
@@ -63,10 +70,10 @@ router.post('/events', requireAuth, async (req, res) => {
 
     const eventResult = await client.query(
       `INSERT INTO events
-        (title, duration_minutes, requested_window_start, requested_window_end, required_capacity, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6)
+        (title, duration_minutes, requested_window_start, requested_window_end, required_capacity, created_by, priority)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [title, duration_minutes, requested_window_start, requested_window_end, required_capacity, req.user.userId]
+      [title, duration_minutes, requested_window_start, requested_window_end, required_capacity, req.user.userId, eventPriority]
     );
     const event = eventResult.rows[0];
 
@@ -128,6 +135,7 @@ router.put('/events/:id', requireAuth, async (req, res) => {
     requested_window_start,
     requested_window_end,
     required_capacity,
+    priority,
   } = req.body;
 
   if (!title || !duration_minutes || !requested_window_start || !requested_window_end || !required_capacity) {
@@ -138,6 +146,12 @@ router.put('/events/:id', requireAuth, async (req, res) => {
 
   if (duration_minutes <= 0 || required_capacity <= 0) {
     return res.status(400).json({ message: 'duration_minutes and required_capacity must be positive' });
+  }
+
+  // Priority is optional on update: if it is not sent, the current value is kept.
+  const newPriority = priority === undefined || priority === null || priority === '' ? null : Number(priority);
+  if (newPriority !== null && ![1, 2, 3].includes(newPriority)) {
+    return res.status(400).json({ message: 'priority must be 1 (low), 2 (normal) or 3 (high)' });
   }
 
   const startDate = new Date(requested_window_start);
@@ -159,13 +173,14 @@ router.put('/events/:id', requireAuth, async (req, res) => {
            requested_window_start = $3,
            requested_window_end = $4,
            required_capacity = $5,
+           priority = COALESCE($7, priority),
            status = 'pending',
            scheduled_start = NULL,
            scheduled_end = NULL,
            room_id = NULL
        WHERE id = $6
        RETURNING *`,
-      [title, duration_minutes, requested_window_start, requested_window_end, required_capacity, req.params.id]
+      [title, duration_minutes, requested_window_start, requested_window_end, required_capacity, req.params.id, newPriority]
     );
 
     res.json({ event: result.rows[0] });

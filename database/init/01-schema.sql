@@ -30,6 +30,7 @@ CREATE TABLE events (
     requested_window_end TIMESTAMP NOT NULL,
     required_capacity INT NOT NULL,
     status VARCHAR(20) DEFAULT 'pending',
+        priority SMALLINT NOT NULL DEFAULT 2 CHECK (priority BETWEEN 1 AND 3),
     scheduled_start TIMESTAMP,
     scheduled_end TIMESTAMP,
     room_id INT REFERENCES rooms(id),
