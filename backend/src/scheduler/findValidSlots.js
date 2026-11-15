@@ -22,7 +22,8 @@ async function findValidSlots(event, allParticipantUserIds, mandatoryUserIds) {
     const startISO = slot.start.toISOString();
     const endISO = slot.end.toISOString();
 
-    const mandatoryCheck = await checkMandatoryParticipants(mandatoryUserIds, startISO, endISO);
+   const requiredUserIds = mandatoryUserIds.length > 0 ? mandatoryUserIds : allParticipantUserIds;
+const mandatoryCheck = await checkMandatoryParticipants(requiredUserIds, startISO, endISO);
     if (!mandatoryCheck.allAvailable) {
       rejectionReasons.push({
         slot: { start: startISO, end: endISO },
